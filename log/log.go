@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"log"
+	l "log"
 	"os"
 	"runtime"
 )
@@ -103,7 +103,11 @@ func plog(level, name string, v ...interface{}) {
 
 func plogf(level, format, name string, v ...interface{}) {
 	if level == levelInfo {
-		log.Print(level + " " + name + " " + fmt.Sprintln(v...))
+		if format != "" {
+			l.Print(level + " " + name + " " + fmt.Sprintf(format, v...))
+		} else {
+			l.Print(level + " " + name + " " + fmt.Sprintln(v...))
+		}
 	} else {
 		_, file, line, _ := runtime.Caller(3)
 		loc := fmt.Sprintf("[%s:%d]", file, line)
@@ -111,6 +115,10 @@ func plogf(level, format, name string, v ...interface{}) {
 		if len(msg) > 0 {
 			msg = msg[0 : len(msg)-1]
 		}
-		log.Print(level + " " + name + " " + msg + " " + loc)
+		if format != "" {
+			l.Print(level + " " + name + " " + fmt.Sprintf(format, v...) + " " + loc)
+		} else {
+			l.Print(level + " " + name + " " + msg + " " + loc)
+		}
 	}
 }
